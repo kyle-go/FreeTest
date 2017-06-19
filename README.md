@@ -19,7 +19,7 @@ FreeTest 是一个免费提供验证码服务的开源项目。
 	
 2. 接口说明
 
-	*//获取验证码 url 和 token * <br>
+	*//获取验证码 url 和 token* <br>
 	POST /getcode
 	
 	*//参数说明* <br>
@@ -33,7 +33,7 @@ FreeTest 是一个免费提供验证码服务的开源项目。
 	
 	
 	*//验证是否正常输入验证码* <br>
-	POST /verify?appid=1000&token=xxxxx&value=abcd&sign=xxx  
+	POST /verify
 	
 	**appid** 即第一步中申请的appid <br>
 	**token** getcode接口返回的token字符串 <br>
