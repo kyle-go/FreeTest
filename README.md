@@ -93,10 +93,11 @@ FreeTest 是一个免费提供验证码服务的开源项目。
 	    req = requests.post("http://ft.kyle.net.cn/verify", params=ft_param)
 	    if req.status_code == 200:
 		json_obj = req.json()
+		# 验证码验证成功！
 		if json_obj.get('status') == 0:
-		    # 这里验证phone和pass合法性，验证通过后写session等。
-		    return '{"status":0, "errmsg":"OK"}'
-	    return '{"status":-1, "errmsg":"FAILED"}'
+			# 这里验证phone和pass，验证通过后就算登录成功啦！
+			return '{"status":0, "errmsg":"OK"}'
+		return '{"status":-1, "errmsg":"FAILED"}'
 
 
 	# 用户服务器接口示例

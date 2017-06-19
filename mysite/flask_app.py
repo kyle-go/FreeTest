@@ -8,7 +8,7 @@ import datetime
 import logging
 import sqlite3
 import requests
-from flask import Flask, request, make_response, current_app
+from flask import Flask, request, make_response, current_app, redirect
 from datetime import timedelta
 from functools import update_wrapper
 from base_cache import cache, rds
@@ -86,7 +86,7 @@ def crossdomain(origin=None, methods=None, headers=None,
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    return "The Main Page."
+    return redirect("https://github.com/kylescript/FreeTest/blob/master/README.md")
 
 
 # POST /getcode?appid=1000&type=1&sign=xxx     eg.sign=md5(appid;type;secret)
@@ -186,8 +186,9 @@ def usercheck():
     req = requests.post("http://ft.kyle.net.cn/verify", params=ft_param)
     if req.status_code == 200:
         json_obj = req.json()
+        # 验证码验证成功！
         if json_obj.get('status') == 0:
-            # 这里验证phone和pass合法性，验证通过后写session等。
+            # 这里验证phone和pass，验证通过后就算登录成功啦！
             return '{"status":0, "errmsg":"OK"}'
     return '{"status":-1, "errmsg":"FAILED"}'
 
