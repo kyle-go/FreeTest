@@ -7,6 +7,7 @@ import random
 import datetime
 import logging
 import sqlite3
+import requests
 from flask import Flask, request, make_response, current_app
 from datetime import timedelta
 from functools import update_wrapper
@@ -155,6 +156,47 @@ def verify():
         return '{"status":0, "errmsg":"OK"}'
     return '{"status":-1, "errmsg":"FAILED"}'
 
+
+# 用户服务器接口示例
+@app.route('/usercheck', methods=['GET', 'POST'])
+@crossdomain(origin='*')
+def usercheck():
+    if request.method != 'POST':
+        return '{"status":-1, "errmsg":"the request type is not POST!"}'
+    token = request.args.get('token')
+    if token is None:
+        token = request.form.get('token')
+    phone = request.args.get('phone')
+    if phone is None:
+        phone = request.form.get('phone')
+    password = request.args.get('pass')
+    if password is None:
+        password = request.form.get('pass')
+    ft_value = request.args.get('value')
+    if ft_value is None:
+        ft_value = request.form.get('value')
+
+    if token is None or phone is None or password is None or ft_value is None:
+        return '{"status":-1, "errmsg":"missing token, phone, pass or value param."}'
+    calc_md5 = hashlib.md5("1000;" +
+                           str(token) + ";" +
+                           str(ft_value) + ";" +
+                           ft_app_secret).hexdigest().upper()
+    ft_param = "appid=1000&token=%s&value=%s&sign=%s" % (token, ft_value, calc_md5)
+    req = requests.post("http://ft.kyle.net.cn/verify", params=ft_param)
+    if req.status_code == 200:
+        json_obj = req.json()
+        if json_obj.status == 0:
+            # 这里验证phone和pass合法性，验证通过后写session等。
+            return '{"status":0, "errmsg":"OK"}'
+    return '{"status":-1, "errmsg":"FAILED"}'
+
+
+# 用户服务器接口示例
+@app.route('/loginok', methods=['GET', 'POST'])
+@crossdomain(origin='*')
+def loginok():
+    return 'LOGIN SUCCESSFULLY!'
 
 # local debug envirment
 if __name__ == '__main__':
