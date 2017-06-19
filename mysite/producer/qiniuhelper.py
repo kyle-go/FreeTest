@@ -1,9 +1,12 @@
 # coding=utf-8
 # qiniu upload file helper
 
+import os
 import logging
 from qiniu import Auth, put_file
-from ignored_private_keys import access_key, secret_key
+
+access_key = os.environ["ft_qiniu_access_key"]
+secret_key = os.environ["ft_qiniu_secret_key"]
 
 
 # file_name即七牛上存储的文件全名
