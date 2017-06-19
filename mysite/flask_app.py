@@ -186,7 +186,7 @@ def usercheck():
     req = requests.post("http://ft.kyle.net.cn/verify", params=ft_param)
     if req.status_code == 200:
         json_obj = req.json()
-        if json_obj.status == 0:
+        if json_obj.get('status') == 0:
             # 这里验证phone和pass合法性，验证通过后写session等。
             return '{"status":0, "errmsg":"OK"}'
     return '{"status":-1, "errmsg":"FAILED"}'

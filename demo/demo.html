@@ -27,12 +27,11 @@
 			var phone = document.getElementById("phonenumber").value;
 			var pass = document.getElementById("password").value;
 			var code = document.getElementById("code").value;
-			console.log(phone + ":" + pass + ":" + code)
 			
 			$.ajax({
 				type:"post",
 				url:"http://ft.kyle.net.cn/usercheck",	//用户服务器验证接口
-				data:{"token":ft_token, "phone":phone, "pass":pass "value":code},
+				data:{"token":ft_token, "phone":phone, "pass":pass, "value":code},
 				success:function(res){
 					var json_obj = JSON.parse(res)
 					var status = json_obj.status
