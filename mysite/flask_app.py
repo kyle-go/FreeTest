@@ -111,8 +111,8 @@ def verify():
 # local debug envirment
 if __name__ == '__main__':
     logging.info("flask_app.py is local.")
+    SQLITE3_DB_PATH = "C:\\Users\\Administrator\\Desktop\\ft\\"
     app.run(host='0.0.0.0', port=5000, debug=True, use_reloader=True)
 # server envirment
 else:
     logging.info("flask_app.py is not local.")
-
