@@ -77,5 +77,5 @@ def create_pool():
     print("Everything is OK!")
     print time.strftime("%Y-%m-%d %X", time.localtime())
 
-print time.strftime("%Y-%m-%d %X", time.localtime())
-create_pool()
+# print time.strftime("%Y-%m-%d %X", time.localtime())
+# create_pool()
