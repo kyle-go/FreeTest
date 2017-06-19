@@ -1,0 +1,1 @@
+uwsgi --stop pidfile.pid

@@ -3,9 +3,7 @@
 
 import logging
 from qiniu import Auth, put_file
-
-access_key = '***'
-secret_key = '***'
+from ignored_private_keys import access_key, secret_key
 
 
 # file_name即七牛上存储的文件全名
