@@ -19,34 +19,33 @@ FreeTest 是一个免费提供验证码服务的开源项目。
 	
 2. 接口说明
 
-	*//获取验证码url和token*
+	*//获取验证码 url 和 token * <br>
 	POST /getcode
 	
-	*//参数说明*
-	**appid** 即第一步中申请的appid
-	**type**  验证码验证方式，目前仅支持1
-	**sign**  参数签名,大小写不敏感，由"appid;type;secret"md5哈希得到
-	eg. md5("1000;1;825911868364338FD368FCC9ABC891F2")
+	*//参数说明* <br>
+	**appid** 即第一步中申请的appid <br>
+	**type**  验证码验证方式，目前仅支持1 <br>
+	**sign**  参数签名,大小写不敏感，由"appid;type;secret"md5哈希得到 eg. md5("1000;1;825911868364338FD368FCC9ABC891F2")
 		  
-	*举例说明：*
-	请求 POST http://ft.kyle.net.cn/getcode?appid=1000&type=1&sign=4896E104C73A7C31EC40FE9762D24B59
+	*举例说明：*<br>
+	请求 POST http://ft.kyle.net.cn/getcode?appid=1000&type=1&sign=4896E104C73A7C31EC40FE9762D24B59 <br>
 	返回 {"status":0, "url":"orrt14ehj.bkt.clouddn.com/ft-1-a094fc94-e09a-4a69-b2f1-b94bb9f7b77f.png", "token":"94bdcb44-5b64-481f-96f1-70b02c8e19ee"}
 	
 	
-	*//验证是否正常输入验证码*
+	*//验证是否正常输入验证码* <br>
 	POST /verify?appid=1000&token=xxxxx&value=abcd&sign=xxx  
 	
-	**appid** 即第一步中申请的appid
-	**token** getcode接口返回的token字符串
-	**value**  用户输入的验证码
-	**sign**   参数签名，大小写不敏感 由"appid;token;value;secret"md5哈希得到
-		 eg. md5("1000;94bdcb44-5b64-481f-96f1-70b02c8e19ee;abcd;825911868364338FD368FCC9ABC891F2")
+	**appid** 即第一步中申请的appid <br>
+	**token** getcode接口返回的token字符串 <br>
+	**value**  用户输入的验证码 <br>
+	**sign**   参数签名，大小写不敏感 由"appid;token;value;secret"md5哈希得到 eg. md5("1000;94bdcb44-5b64-481f-96f1-70b02c8e19ee;abcd;825911868364338FD368FCC9ABC891F2")
 
-	*举例说明：*
-	请求 POST http://ft.kyle.net.cn/verify?appid=1000&token=94bdcb44-5b64-481f-96f1-70b02c8e19ee&value=abcd&sign=dd9fe3162bc1bff35b4b1c4630ad744b
+	*举例说明：* <br>
+	请求 POST http://ft.kyle.net.cn/verify?appid=1000&token=94bdcb44-5b64-481f-96f1-70b02c8e19ee&value=abcd&sign=dd9fe3162bc1bff35b4b1c4630ad744b <br>
 	返回 {"status":0, "errmsg":"OK"}
 
 3. 客户端接入
+	```
 	ajax 方式：
 	$.ajax({
 		type:"post",
@@ -57,6 +56,7 @@ FreeTest 是一个免费提供验证码服务的开源项目。
 			$("#codeimg").attr("src", "http://" +json_obj.url);
 		}
 	});
+	```
 	注意 **ft_app_secret** 不能暴露出来，sign可以事先算好了放在HTML前端，也可以由自己服务器发起getcode请求，然后再将验证码url和token发给前端页面。
 
 4. 服务器接入 
