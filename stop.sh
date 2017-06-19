@@ -1,1 +1,1 @@
-uwsgi --stop pidfile.pid
+uwsgi --stop /home/ft/pidfile.pid

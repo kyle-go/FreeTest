@@ -7,7 +7,9 @@ import random
 import datetime
 import logging
 import sqlite3
-from flask import Flask, request
+from flask import Flask, request, make_response, current_app
+from datetime import timedelta
+from functools import update_wrapper
 from base_cache import cache, rds
 from producer.producer import picture_count
 from config import SQLITE3_DB_PATH
@@ -38,6 +40,49 @@ cache.init_app(app, config=config)
 random.seed(datetime.datetime.now())
 
 
+# 配置跨域支持
+def crossdomain(origin=None, methods=None, headers=None,
+                max_age=21600, attach_to_all=True,
+                automatic_options=True):
+    if methods is not None:
+        methods = ', '.join(sorted(x.upper() for x in methods))
+    if headers is not None and not isinstance(headers, basestring):
+        headers = ', '.join(x.upper() for x in headers)
+    if not isinstance(origin, basestring):
+        origin = ', '.join(origin)
+    if isinstance(max_age, timedelta):
+        max_age = max_age.total_seconds()
+
+    def get_methods():
+        if methods is not None:
+            return methods
+
+        options_resp = current_app.make_default_options_response()
+        return options_resp.headers['allow']
+
+    def decorator(f):
+        def wrapped_function(*args, **kwargs):
+            if automatic_options and request.method == 'OPTIONS':
+                resp = current_app.make_default_options_response()
+            else:
+                resp = make_response(f(*args, **kwargs))
+            if not attach_to_all and request.method != 'OPTIONS':
+                return resp
+
+            h = resp.headers
+
+            h['Access-Control-Allow-Origin'] = origin
+            h['Access-Control-Allow-Methods'] = get_methods()
+            h['Access-Control-Max-Age'] = str(max_age)
+            if headers is not None:
+                h['Access-Control-Allow-Headers'] = headers
+            return resp
+
+        f.provide_automatic_options = False
+        return update_wrapper(wrapped_function, f)
+    return decorator
+
+
 @app.route('/', methods=['GET', 'POST'])
 def index():
     return "The Main Page."
@@ -45,6 +90,7 @@ def index():
 
 # POST /getcode?appid=1000&type=1&sign=xxx     eg.sign=md5(appid;type;secret)
 @app.route('/getcode', methods=['GET', 'POST'])
+@crossdomain(origin='*')
 def getvcode():
     if request.method != 'POST':
         return '{"status":-1, "errmsg":"the request type is not POST!"}'
@@ -75,11 +121,13 @@ def getvcode():
 
     ft_token = str(uuid.uuid4())
     rds.set(ft_token, ft_value, 1*60*60)
-    return '{"status":0, "url":"%s", "token"="%s"}' % (ft_url, ft_token)
+
+    return '{"status":0, "url":"%s", "token":"%s"}' % (ft_url, ft_token)
 
 
 # POST /verify?appid=1000&token=xxxxx&value=abcd&sign=xxx   eg.sign=md5(appid;token;value;secret)
 @app.route('/verify', methods=['GET', 'POST'])
+@crossdomain(origin='*')
 def verify():
     if request.method != 'POST':
         return '{"status":-1, "errmsg":"the request type is not POST!"}'

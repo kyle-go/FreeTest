@@ -1,1 +1,1 @@
-uwsgi --reload pidfile.pid
+uwsgi --reload /home/ft/pidfile.pid
