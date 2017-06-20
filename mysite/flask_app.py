@@ -8,7 +8,7 @@ import datetime
 import logging
 import sqlite3
 import requests
-from flask import Flask, request, make_response, current_app, redirect
+from flask import Flask, request, make_response, current_app, redirect, render_template
 from datetime import timedelta
 from functools import update_wrapper
 from base_cache import cache, rds
@@ -87,6 +87,11 @@ def crossdomain(origin=None, methods=None, headers=None,
 @app.route('/', methods=['GET', 'POST'])
 def index():
     return redirect("https://github.com/kylescript/FreeTest/blob/master/README.md")
+
+
+@app.route('/demo', methods=['GET', 'POST'])
+def demo():
+    return render_template("demo.html")
 
 
 # POST /getcode?appid=1000&type=1&sign=xxx     eg.sign=md5(appid;type;secret)

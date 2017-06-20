@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>FT-Demo</title>
+    <script type="text/javascript" src="../static/jquery.min.js"></script>
+	<script type="text/javascript" src="../static/md5-min.js"></script>
+	<script type='text/javascript'>
+		var ft_token = ""
+		var ft_url = ""
+		function imgclick() {
+			$.ajax({
+				type:"post",
+				url:"http://ft.kyle.net.cn/getcode",	//FreeTest 接口
+				data:{"appid":1000, "type":1, "sign":"4896E104C73A7C31EC40FE9762D24B59"},
+				success:function(res){
+					var json_obj = JSON.parse(res)
+					ft_token = json_obj.token
+					ft_url = "http://" +json_obj.url
+					$("#codeimg").attr("src", ft_url);
+				}
+			});
+		}
+		
+		function login() {
+			var phone = document.getElementById("phonenumber").value;
+			var pass = document.getElementById("password").value;
+			var code = document.getElementById("code").value;
+			
+			$.ajax({
+				type:"post",
+				url:"http://ft.kyle.net.cn/usercheck",	//用户服务器验证接口
+				data:{"token":ft_token, "phone":phone, "pass":pass, "value":code},
+				success:function(res){
+					var json_obj = JSON.parse(res)
+					var status = json_obj.status
+					if (status === 0) {
+						location.href='http://ft.kyle.net.cn/loginok'; //跳转用户服务器登陆成功界面
+					} else {
+						alert("验证失败了，请重试!")
+					}
+				}
+			});
+		}
+		
+		//run once on page load.
+		imgclick();
+	</script>
+</head>
+<body>
+
+<form>
+	<span> 帐号登录 </span>
+    <p>
+        <input id="phonenumber" type="text" placeholder="手机号码">
+    </p>
+	<p>
+        <input id="password" type="password" placeholder="密码">
+	</p>
+	<p>
+		<img id="codeimg" src=""  alt="正在请求中, 请稍等..." onclick="imgclick()" /> <br>
+        <input id="code" type="text" placeholder="填写验证码">
+	</p>
+    <button type="button" onclick='login()'>登录</button>
+</div>
+</body>
+</html>
+
