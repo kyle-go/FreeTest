@@ -44,9 +44,6 @@ cache.init_app(app, config=config)
 # 设置随机种子
 random.seed(datetime.datetime.now())
 
-# 从sqlite database读数据存储到redis中
-sqlite2redis()
-
 
 # 配置跨域支持
 def crossdomain(origin=None, methods=None, headers=None,
@@ -126,7 +123,7 @@ def getvcode():
     rid = random.randint(1, SQLITE3_DB_SIZE)
     ft_data = rds.get(str(rid))
     if ft_data is None:
-        return '{"status":-1, "errmsg":"server init error."}'
+        return '{"status":-1, "errmsg":"server not ready, please wait."}'
     ft_data = eval(ft_data)
     return '{"status":0, "url":"%s", "token":"%s"}' % (ft_data[1], ft_data[2])
 

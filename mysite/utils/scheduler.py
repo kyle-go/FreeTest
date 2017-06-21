@@ -10,6 +10,7 @@ class MultiThreadScheduler(object):
         self._t = None
 
     def start(self):
+        self.function()
         if self._t is None:
             self._t = Timer(self.sleep_time, self._run)
             self._t.start()
