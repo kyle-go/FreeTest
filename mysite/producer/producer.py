@@ -8,11 +8,15 @@ from PIL import Image
 from PIL import ImageDraw
 from PIL import ImageFont
 from qiniuhelper import qiniu_upload_file
-from config import SQLITE3_DB_SIZE
+from config import SQLITE3_DB_SIZE, SQLITE3_DB_PATH
+
+CUR_PATH = os.path.dirname(os.path.abspath(__file__)) + "/"
+TMP_PNG = CUR_PATH + "tmp.png"
+TEMPLATE_PNG = CUR_PATH + "template.png"
 
 # 待挑选的字符，由于一些字体原因，这里去掉容易混淆的 iI lL oO 10 字符, 还剩下54个字符
 rand_chars = "abcdefghgkmnpqrstuvwxyzABCDEFGHGKMNPQRSTUVWXYZ23456789"
-rand_fonts = ("fonts\ChalkboardSE-Light.ttf", "fonts\PrincetownStd.otf")
+rand_fonts = (CUR_PATH + "fonts/ChalkboardSE-Light.ttf", CUR_PATH + "fonts/PrincetownStd.otf")
 
 
 def get_rand_chars():
@@ -45,7 +49,7 @@ def draw_image_char(img, c, font, pos_x, index):
 
 
 def draw_image():
-    im = Image.open("template.png")
+    im = Image.open(TEMPLATE_PNG)
     pos_x = 10
     index = 0
     vcode = ""
@@ -55,19 +59,25 @@ def draw_image():
         im = draw_image_char(im, c[0], c[1], pos_x, index)
         pos_x += 25
         index += 1
-    im.save("tmp.png")
+    im.save(TMP_PNG)
     return vcode
 
 
 def create_sqlite3_db():
-    con = sqlite3.connect('ft2.db')
+    con = sqlite3.connect(SQLITE3_DB_PATH + 'ft2.db')
     cur = con.cursor()
     cur.execute('CREATE TABLE IF NOT EXISTS ft (id INTEGER PRIMARY KEY, vcode VARCHAR(6), url VARCHAR(120))')
     con.commit()
 
     for _ in range(1, SQLITE3_DB_SIZE + 1):
         vcode = draw_image()
-        url = qiniu_upload_file("ft-1-" + str(uuid.uuid4()) + ".png", "tmp.png")
-        os.remove("tmp.png")
+        url = qiniu_upload_file("ft-1-" + str(uuid.uuid4()) + ".png", TMP_PNG)
         cur.execute('INSERT INTO ft (vcode, url) VALUES ("%s", "%s")' % (vcode, url))
         con.commit()
+
+        # 七牛sdk貌似有个bug，持有文件句柄没有释放，但好像只有第一次函数调用才出现
+        # 报错WindowsError: [Error 32], 文件被占用
+        try:
+            os.remove(TMP_PNG)
+        except Exception, e:
+            print("create_sqlite3_db exception:" + str(e))

@@ -11,7 +11,7 @@ from flask import Flask, request, make_response, current_app, redirect, render_t
 from datetime import timedelta
 from functools import update_wrapper
 from utils.base_cache import cache, rds
-from config import SQLITE3_DB_SIZE
+from config import SQLITE3_DB_SIZE, SQLITE3_DB_PATH
 from utils.redis_helper import sqlite2redis, get_token_value
 from utils.scheduler import MultiThreadScheduler
 from producer.producer import create_sqlite3_db
@@ -204,7 +204,6 @@ def loginok():
 # local debug envirment
 if __name__ == '__main__':
     logging.info("flask_app.py is local.")
-    SQLITE3_DB_PATH = "C:\\Users\\Administrator\\Desktop\\ft\\"
     app.run(host='0.0.0.0', port=5000, debug=True, use_reloader=True)
 # server envirment
 else:
