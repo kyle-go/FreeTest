@@ -74,10 +74,4 @@ def create_sqlite3_db():
         url = qiniu_upload_file("ft-1-" + str(uuid.uuid4()) + ".png", TMP_PNG)
         cur.execute('INSERT INTO ft (vcode, url) VALUES ("%s", "%s")' % (vcode, url))
         con.commit()
-
-        # 七牛sdk貌似有个bug，持有文件句柄没有释放，但好像只有第一次函数调用才出现
-        # 报错WindowsError: [Error 32], 文件被占用
-        try:
-            os.remove(TMP_PNG)
-        except Exception, e:
-            print("create_sqlite3_db exception:" + str(e))
+        os.remove(TMP_PNG)
