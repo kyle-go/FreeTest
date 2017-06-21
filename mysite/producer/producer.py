@@ -1,20 +1,18 @@
 ﻿# -*- coding:utf-8 -*-
 
 import os
-import time
 import uuid
 import random
-import datetime
 import sqlite3
 from PIL import Image
 from PIL import ImageDraw
 from PIL import ImageFont
 from qiniuhelper import qiniu_upload_file
+from config import SQLITE3_DB_SIZE
 
 # 待挑选的字符，由于一些字体原因，这里去掉容易混淆的 iI lL oO 10 字符, 还剩下54个字符
 rand_chars = "abcdefghgkmnpqrstuvwxyzABCDEFGHGKMNPQRSTUVWXYZ23456789"
 rand_fonts = ("fonts\ChalkboardSE-Light.ttf", "fonts\PrincetownStd.otf")
-picture_count = 100
 
 
 def get_rand_chars():
@@ -61,21 +59,15 @@ def draw_image():
     return vcode
 
 
-def create_pool():
+def create_sqlite3_db():
     con = sqlite3.connect('ft2.db')
     cur = con.cursor()
     cur.execute('CREATE TABLE IF NOT EXISTS ft (id INTEGER PRIMARY KEY, vcode VARCHAR(6), url VARCHAR(120))')
     con.commit()
 
-    for i in range(0, picture_count):
+    for _ in range(1, SQLITE3_DB_SIZE + 1):
         vcode = draw_image()
         url = qiniu_upload_file("ft-1-" + str(uuid.uuid4()) + ".png", "tmp.png")
         os.remove("tmp.png")
         cur.execute('INSERT INTO ft (vcode, url) VALUES ("%s", "%s")' % (vcode, url))
         con.commit()
-
-    print("Everything is OK!")
-    print time.strftime("%Y-%m-%d %X", time.localtime())
-
-# print time.strftime("%Y-%m-%d %X", time.localtime())
-# create_pool()

@@ -1,19 +1,20 @@
 # coding=utf-8
 # main flask_app
 
-import uuid
+import os
 import hashlib
 import random
 import datetime
 import logging
-import sqlite3
 import requests
 from flask import Flask, request, make_response, current_app, redirect, render_template
 from datetime import timedelta
 from functools import update_wrapper
-from base_cache import cache, rds
-from producer.producer import picture_count
-from config import SQLITE3_DB_PATH
+from utils.base_cache import cache, rds
+from config import SQLITE3_DB_SIZE
+from utils.redis_helper import sqlite2redis, get_token_value
+from utils.scheduler import MultiThreadScheduler
+from producer.producer import create_sqlite3_db
 
 ft_app_id = 1000
 ft_app_secret = "825911868364338FD368FCC9ABC891F2"
@@ -39,6 +40,9 @@ cache.init_app(app, config=config)
 
 # 设置随机种子
 random.seed(datetime.datetime.now())
+
+# 从sqlite database读数据存储到redis中
+sqlite2redis()
 
 
 # 配置跨域支持
@@ -71,7 +75,6 @@ def crossdomain(origin=None, methods=None, headers=None,
                 return resp
 
             h = resp.headers
-
             h['Access-Control-Allow-Origin'] = origin
             h['Access-Control-Allow-Methods'] = get_methods()
             h['Access-Control-Max-Age'] = str(max_age)
@@ -117,18 +120,12 @@ def getvcode():
         return '{"status":-1, "errmsg":"sign error."}'
 
     # random row
-    row_id = random.randint(1, picture_count)
-    con = sqlite3.connect(SQLITE3_DB_PATH + "ft.db")
-    cur = con.cursor()
-    cur.execute('SELECT * FROM ft WHERE id=%d' % row_id)
-    ft_data = cur.fetchone()
-    ft_value = str(ft_data[1])
-    ft_url = str(ft_data[2])
+    rid = random.randint(1, SQLITE3_DB_SIZE)
+    ft_data = rds.get(str(rid))
+    if ft_data is None:
+        return '{"status":-1, "errmsg":"server init error."}'
 
-    ft_token = str(uuid.uuid4())
-    rds.set(ft_token, ft_value, 1*60*60)
-
-    return '{"status":0, "url":"%s", "token":"%s"}' % (ft_url, ft_token)
+    return '{"status":0, "url":"%s", "token":"%s"}' % (ft_data[2], ft_data[0])
 
 
 # POST /verify?appid=1000&token=xxxxx&value=abcd&sign=xxx   eg.sign=md5(appid;token;value;secret)
@@ -157,7 +154,7 @@ def verify():
                            ft_app_secret).hexdigest().upper()
     if str(sign).upper() != calc_md5:
         return '{"status":-1, "errmsg":"sign error."}'
-    if str(ft_value).upper() == str(rds.get(token)).upper():
+    if str(ft_value).upper() == str(get_token_value(token)).upper():
         return '{"status":0, "errmsg":"OK"}'
     return '{"status":-1, "errmsg":"FAILED"}'
 
@@ -211,4 +208,14 @@ if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True, use_reloader=True)
 # server envirment
 else:
+    def scheduler_callback():
+        create_sqlite3_db()
+        if os.path.isfile(SQLITE3_DB_PATH + "ft.db"):
+            os.remove(SQLITE3_DB_PATH + "ft.db")
+        os.rename(SQLITE3_DB_PATH + "ft2.db", SQLITE3_DB_PATH + "ft.db")
+        sqlite2redis()
+
     logging.info("flask_app.py is not local.")
+    # 这里设置7000秒比7200秒（2小时）稍短一点点
+    refresh_pictures_scheduler = MultiThreadScheduler(7000, scheduler_callback)
+    refresh_pictures_scheduler.start()
