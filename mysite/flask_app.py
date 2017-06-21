@@ -127,8 +127,8 @@ def getvcode():
     ft_data = rds.get(str(rid))
     if ft_data is None:
         return '{"status":-1, "errmsg":"server init error."}'
-
-    return '{"status":0, "url":"%s", "token":"%s"}' % (ft_data[2], ft_data[0])
+    ft_data = eval(ft_data)
+    return '{"status":0, "url":"%s", "token":"%s"}' % (ft_data[1], ft_data[2])
 
 
 # POST /verify?appid=1000&token=xxxxx&value=abcd&sign=xxx   eg.sign=md5(appid;token;value;secret)

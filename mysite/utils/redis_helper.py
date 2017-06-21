@@ -16,15 +16,15 @@ def sqlite2redis():
         ft_id = str(row[0])
         ft_value = str(row[1])
         ft_url = str(row[2])
-        ft_token = str(uuid.uuid4())
         
-        rds.set(ft_id, (ft_token, ft_value, ft_url), 2*60*60)
+        rds.set(ft_id, (ft_value, ft_url, str(uuid.uuid4())), 2*60*60)
 
 
 def get_token_value(token):
     for i in range(1, SQLITE3_DB_SIZE + 1):
         ft_data = rds.get(str(i))
         if ft_data is not None:
-            if ft_data[0] == token:
-                return ft_data[1]
+            ft_data = eval(ft_data)
+            if ft_data[2] == token:
+                return ft_data[0]
     return None
