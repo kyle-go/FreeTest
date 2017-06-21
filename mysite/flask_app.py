@@ -10,9 +10,9 @@ import requests
 from flask import Flask, request, make_response, current_app, redirect, render_template
 from datetime import timedelta
 from functools import update_wrapper
-from utils.base_cache import cache, rds
+from utils.base_cache import rds
 from config import SQLITE3_DB_SIZE, SQLITE3_DB_PATH, REDIS_TIME_OUT
-from utils.redis_helper import sqlite2redis, get_token_value
+from utils.redis_helper import sqlite2redis, get_token_value, cleanup_redis
 from utils.scheduler import MultiThreadScheduler
 from producer.producer import create_sqlite3_db
 
@@ -30,16 +30,9 @@ console = logging.StreamHandler()
 console.setLevel(logging.NOTSET)
 logging.getLogger('').addHandler(console)
 
-# 配置redis
-config = {
-    'CACHE_TYPE': 'redis',
-    'CACHE_REDIS_HOST': '127.0.0.1',
-    'CACHE_REDIS_PORT': 6379,
-    'CACHE_REDIS_DB': '',
-    'CACHE_REDIS_PASSWORD': '123456'
-}
+# 清理redis缓存
+cleanup_redis()
 
-cache.init_app(app, config=config)
 
 # 设置随机种子
 random.seed(datetime.datetime.now())

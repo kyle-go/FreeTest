@@ -28,3 +28,8 @@ def get_token_value(token):
             if ft_data[2] == token:
                 return ft_data[0]
     return None
+
+
+def cleanup_redis():
+    for i in range(1, SQLITE3_DB_SIZE + 1):
+        rds.delete(str(i))
