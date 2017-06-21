@@ -26,6 +26,9 @@ logging.basicConfig(filename='flask.log',
                     format='%(asctime)s+%(msecs)d %(levelname)s:%(message)s',
                     datefmt='%Y-%m-%d %H:%M:%S',
                     level=logging.DEBUG)
+console = logging.StreamHandler()
+console.setLevel(logging.NOTSET)
+logging.getLogger('').addHandler(console)
 
 # 配置redis
 config = {
@@ -207,6 +210,7 @@ if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True, use_reloader=True)
 # server envirment
 else:
+    # 仅生产环境每隔7000秒更换一批验证码
     def scheduler_callback():
         create_sqlite3_db()
         if os.path.isfile(SQLITE3_DB_PATH + "ft.db"):
