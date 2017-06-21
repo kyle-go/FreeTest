@@ -3,7 +3,7 @@
 
 import uuid
 import sqlite3
-from config import SQLITE3_DB_PATH, SQLITE3_DB_SIZE
+from config import SQLITE3_DB_PATH, SQLITE3_DB_SIZE, REDIS_TIME_OUT
 from base_cache import rds
 
 
@@ -17,7 +17,7 @@ def sqlite2redis():
         ft_value = str(row[1])
         ft_url = str(row[2])
         
-        rds.set(ft_id, (ft_value, ft_url, str(uuid.uuid4())), 2*60*60)
+        rds.set(ft_id, (ft_value, ft_url, str(uuid.uuid4())), REDIS_TIME_OUT)
 
 
 def get_token_value(token):

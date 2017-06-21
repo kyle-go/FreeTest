@@ -11,7 +11,7 @@ from flask import Flask, request, make_response, current_app, redirect, render_t
 from datetime import timedelta
 from functools import update_wrapper
 from utils.base_cache import cache, rds
-from config import SQLITE3_DB_SIZE, SQLITE3_DB_PATH
+from config import SQLITE3_DB_SIZE, SQLITE3_DB_PATH, REDIS_TIME_OUT
 from utils.redis_helper import sqlite2redis, get_token_value
 from utils.scheduler import MultiThreadScheduler
 from producer.producer import create_sqlite3_db
@@ -219,6 +219,6 @@ else:
         sqlite2redis()
 
     logging.info("flask_app.py is not local.")
-    # 这里设置7000秒比7200秒（2小时）稍短一点点
-    refresh_pictures_scheduler = MultiThreadScheduler(7000, scheduler_callback)
+    # 这里设置比2小时稍短一点点，给生成验证码图片和上传图片到七牛云一些时间。
+    refresh_pictures_scheduler = MultiThreadScheduler(REDIS_TIME_OUT-5*60, scheduler_callback)
     refresh_pictures_scheduler.start()

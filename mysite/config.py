@@ -5,3 +5,4 @@ import os
 # sqlite3 数据库绝对目录
 SQLITE3_DB_PATH = os.path.dirname(os.path.abspath(__file__)) + "/"
 SQLITE3_DB_SIZE = 20
+REDIS_TIME_OUT = 7200
