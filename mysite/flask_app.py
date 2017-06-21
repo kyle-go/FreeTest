@@ -220,5 +220,6 @@ else:
 
     logging.info("flask_app.py is not local.")
     # 这里设置比2小时稍短一点点，给生成验证码图片和上传图片到七牛云一些时间。
+    # 要确保在这段时间内验证图片可以生成完毕，并且成功上传到七牛云。现在暂时写5分钟，以后可能会调整
     refresh_pictures_scheduler = MultiThreadScheduler(REDIS_TIME_OUT-5*60, scheduler_callback)
     refresh_pictures_scheduler.start()
