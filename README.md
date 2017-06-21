@@ -3,7 +3,8 @@ FreeTest 是一个免费提供验证码服务的开源项目。
 目前服务器部署在Amazon EC2免费一年的云服务器上，域名[http://ft.kyle.net.cn/](http://ft.kyle.net.cn/) ， 主域名是我的博客。
 
 ### 测试Demo
-[http://ft.kyle.net.cn/demo](http://ft.kyle.net.cn/demo)
+[http://ft.kyle.net.cn/demo](http://ft.kyle.net.cn/demo) 
+注：七牛云图片存储开启ssl需要域名备案，所以验证码图片url暂时不支持https。 若发现自动调转https，可在chrome访客模式测试。
 
 ### 开发环境：
 * 操作系统：Windows、Linux平台
