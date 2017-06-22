@@ -58,7 +58,7 @@ def get_token_value(token):
     return None
 
 
-def cleanup_redis():
+def init_redis():
     rds.set("cur_select", 0)
     for i in range(1, SQLITE3_DB_SIZE + 1):
         rds.delete("%04d1" % i)

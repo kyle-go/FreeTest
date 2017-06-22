@@ -11,7 +11,7 @@ from flask import Flask, request, make_response, current_app, redirect, render_t
 from datetime import timedelta
 from functools import update_wrapper
 from config import SQLITE3_DB_PATH, REDIS_TIME_OUT
-from utils.redis_helper import sqlite2redis, get_random_cache, get_token_value, cleanup_redis
+from utils.redis_helper import sqlite2redis, get_random_cache, get_token_value, init_redis
 from utils.scheduler import MultiThreadScheduler
 from producer.producer import create_sqlite3_db
 
@@ -29,8 +29,8 @@ console = logging.StreamHandler()
 console.setLevel(logging.NOTSET)
 logging.getLogger('').addHandler(console)
 
-# 清理redis缓存
-cleanup_redis()
+# 初始化redis缓存
+init_redis()
 
 
 # 设置随机种子
