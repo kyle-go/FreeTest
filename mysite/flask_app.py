@@ -10,9 +10,8 @@ import requests
 from flask import Flask, request, make_response, current_app, redirect, render_template
 from datetime import timedelta
 from functools import update_wrapper
-from utils.base_cache import rds
-from config import SQLITE3_DB_SIZE, SQLITE3_DB_PATH, REDIS_TIME_OUT
-from utils.redis_helper import sqlite2redis, get_token_value, cleanup_redis
+from config import SQLITE3_DB_PATH, REDIS_TIME_OUT
+from utils.redis_helper import sqlite2redis, get_random_cache, get_token_value, cleanup_redis
 from utils.scheduler import MultiThreadScheduler
 from producer.producer import create_sqlite3_db
 
@@ -112,9 +111,8 @@ def getvcode():
     if str(sign).upper() != calc_md5:
         return '{"status":-1, "errmsg":"sign error."}'
 
-    # random row
-    rid = random.randint(1, SQLITE3_DB_SIZE)
-    ft_data = rds.get(str(rid))
+    # random cache
+    ft_data = get_random_cache()
     if ft_data is None:
         return '{"status":-1, "errmsg":"server not ready, please wait."}'
     ft_data = eval(ft_data)
