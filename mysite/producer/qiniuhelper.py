@@ -16,4 +16,4 @@ def qiniu_upload_file(file_name, file_path):
     ret, info = put_file(token, file_name, file_path)
     # logging.info("qiniuhelper.py qiniu_upload_image ret:" + str(ret))
     # logging.info("qiniuhelper.py qiniu_upload_image info:" + str(info))
-    return "orrt14ehj.bkt.clouddn.com/" + file_name
+    return "ftstore.kyle.net.cn/" + file_name

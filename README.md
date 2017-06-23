@@ -1,10 +1,9 @@
 ### FreeTest是什么
 FreeTest 是一个免费提供验证码服务的开源项目。
-目前服务器部署在Amazon EC2免费一年的云服务器上，域名[http://ft.kyle.net.cn/](http://ft.kyle.net.cn/) ， 主域名是我的博客。
+目前服务器部署在阿里云ECS，网速和性能都有保障，域名[http://freetest.net.cn/](http://freetest.net.cn/) 。
 
 ### 测试Demo
-[http://ft.kyle.net.cn/demo](http://ft.kyle.net.cn/demo) 
-注：七牛云图片存储开启ssl需要域名备案，所以验证码图片url暂时不支持https。 若发现自动调转https，可在chrome访客模式测试。
+[http://freetest.net.cn/demo](http://freetest.net.cn/demo) 
 
 ### 开发环境：
 * 操作系统：Windows、Linux平台
@@ -32,8 +31,8 @@ FreeTest 是一个免费提供验证码服务的开源项目。
 	**sign**  参数签名,大小写不敏感，由"appid;type;secret"md5哈希得到 eg. md5("1000;1;825911868364338FD368FCC9ABC891F2")
 		  
 	*举例说明：*<br>
-	请求 POST http://ft.kyle.net.cn/getcode?appid=1000&type=1&sign=4896E104C73A7C31EC40FE9762D24B59 <br>
-	返回 {"status":0, "url":"orrt14ehj.bkt.clouddn.com/ft-1-a094fc94-e09a-4a69-b2f1-b94bb9f7b77f.png", "token":"94bdcb44-5b64-481f-96f1-70b02c8e19ee"}
+	请求 POST http://freetest.net.cn/getcode?appid=1000&type=1&sign=4896E104C73A7C31EC40FE9762D24B59 <br>
+	返回 {"status":0, "url":"ftstore.kyle.net.cn/ft-1-a094fc94-e09a-4a69-b2f1-b94bb9f7b77f.png", "token":"94bdcb44-5b64-481f-96f1-70b02c8e19ee"}
 	
 	
 	*//验证是否正常输入验证码* <br>
@@ -45,7 +44,7 @@ FreeTest 是一个免费提供验证码服务的开源项目。
 	**sign**   参数签名，大小写不敏感 由"appid;token;value;secret"md5哈希得到 eg. md5("1000;94bdcb44-5b64-481f-96f1-70b02c8e19ee;abcd;825911868364338FD368FCC9ABC891F2")
 
 	*举例说明：* <br>
-	请求 POST http://ft.kyle.net.cn/verify?appid=1000&token=94bdcb44-5b64-481f-96f1-70b02c8e19ee&value=abcd&sign=dd9fe3162bc1bff35b4b1c4630ad744b <br>
+	请求 POST http://freetest.net.cn/verify?appid=1000&token=94bdcb44-5b64-481f-96f1-70b02c8e19ee&value=abcd&sign=dd9fe3162bc1bff35b4b1c4630ad744b <br>
 	返回 {"status":0, "errmsg":"OK"}
 
 3. 客户端接入
@@ -53,17 +52,17 @@ FreeTest 是一个免费提供验证码服务的开源项目。
 	ajax接入示例：
 	$.ajax({
 		type:"post",
-		url:"http://ft.kyle.net.cn/getcode",
+		url:"http://freetest.net.cn/getcode",
 		data:{"appid":1000, "type":1, "sign":"4896E104C73A7C31EC40FE9762D24B59"},
 		success:function(res){
 			json_obj = JSON.parse(res)
-			$("#codeimg").attr("src", "http://" +json_obj.url);
+			$("#codeimg").attr("src", "https://" +json_obj.url);
 		}
 	});
 	```
 	注意 
 	* **ft_app_secret** 不能暴露出来，sign可以事先算好了放在HTML前端，也可以由自己服务器发起getcode请求，然后再将验证码url和token发给前端页面。 详细代码请参考 [Demo](https://github.com/kylescript/FreeTest/blob/master/demo/demo.html)
-	* getcode接口返回的url是不带http头的， 根据自己的页面需求自行拼接http或者https头。
+	* getcode接口返回url不带http头， 根据自己的页面需求自行拼接http或者https头。
 
 4. 服务器接入 
 	
@@ -96,7 +95,7 @@ FreeTest 是一个免费提供验证码服务的开源项目。
 				   str(ft_value) + ";" +
 				   ft_app_secret).hexdigest().upper()
 	    ft_param = "appid=1000&token=%s&value=%s&sign=%s" % (token, ft_value, calc_md5)
-	    req = requests.post("http://ft.kyle.net.cn/verify", params=ft_param)
+	    req = requests.post("http://freetest.net.cn/verify", params=ft_param)
 	    if req.status_code == 200:
 		json_obj = req.json()
 		# 验证码验证成功！
