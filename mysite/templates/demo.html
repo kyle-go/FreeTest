@@ -11,7 +11,7 @@
 		function imgclick() {
 			$.ajax({
 				type:"post",
-				url:"http://ft.kyle.net.cn/getcode",	//FreeTest 接口
+				url:"http://freetest.net.cn/getcode",	//FreeTest 接口
 				data:{"appid":1000, "type":1, "sign":"4896E104C73A7C31EC40FE9762D24B59"},
 				success:function(res){
 					var json_obj = JSON.parse(res)
@@ -30,13 +30,13 @@
 			
 			$.ajax({
 				type:"post",
-				url:"http://ft.kyle.net.cn/usercheck",	//用户服务器验证接口
+				url:"http://freetest.net.cn/usercheck",	//用户服务器验证接口
 				data:{"token":ft_token, "phone":phone, "pass":pass, "value":code},
 				success:function(res){
 					var json_obj = JSON.parse(res)
 					var status = json_obj.status
 					if (status === 0) {
-						location.href='http://ft.kyle.net.cn/loginok'; //跳转用户服务器登陆成功界面
+						location.href='http://freetest.net.cn/loginok'; //跳转用户服务器登陆成功界面
 					} else {
 						alert("验证失败了，请重试!")
 					}
