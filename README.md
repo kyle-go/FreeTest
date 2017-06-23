@@ -1,3 +1,5 @@
+注：目前freetest.net.cn域名，时好时坏，需要等备案完，大概需要2周时间左右  -- 2017.6.23
+
 ### FreeTest是什么
 FreeTest 是一个免费提供验证码服务的开源项目。
 目前服务器部署在阿里云ECS，网速和性能都有保障，域名[http://freetest.net.cn/](http://freetest.net.cn/) 。
