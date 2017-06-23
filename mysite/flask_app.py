@@ -176,7 +176,7 @@ def usercheck():
                            str(ft_value) + ";" +
                            ft_app_secret).hexdigest().upper()
     ft_param = "appid=1000&token=%s&value=%s&sign=%s" % (token, ft_value, calc_md5)
-    req = requests.post("http://ft.kyle.net.cn/verify", params=ft_param)
+    req = requests.post("https://freetest.net.cn/verify", params=ft_param)
     if req.status_code == 200:
         json_obj = req.json()
         # 验证码验证成功！
