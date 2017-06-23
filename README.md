@@ -1,3 +1,5 @@
+#### *（由于域名正在备案中，freetest.net.cn只能通过vnp或者ss代理以https方式访问，备案通过后才能开放80端口。）*
+
 ### FreeTest是什么
 FreeTest 是一个免费提供验证码服务的开源项目。
 目前服务器部署在阿里云ECS，网速和性能都有保障，域名[https://freetest.net.cn/](https://freetest.net.cn/) 。
