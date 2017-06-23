@@ -94,7 +94,7 @@ def demo():
 @crossdomain(origin='*')
 def getvcode():
     if request.method != 'POST':
-        return '{"status":-1, "errmsg":"the request type is not POST!"}'
+        return '{"status":-1, "errmsg":"HTTP method GET is not supported by this URL."}'
     appid = request.args.get('appid')
     if appid is None:
         appid = request.form.get('appid')
@@ -114,7 +114,7 @@ def getvcode():
     # random cache
     ft_data = get_random_cache()
     if ft_data is None:
-        return '{"status":-1, "errmsg":"server not ready, please wait."}'
+        return '{"status":-1, "errmsg":"server is not ready, please wait."}'
     ft_data = eval(ft_data)
     return '{"status":0, "url":"%s", "token":"%s"}' % (ft_data[1], ft_data[2])
 
@@ -124,7 +124,7 @@ def getvcode():
 @crossdomain(origin='*')
 def verify():
     if request.method != 'POST':
-        return '{"status":-1, "errmsg":"the request type is not POST!"}'
+        return '{"status":-1, "errmsg":"HTTP method GET is not supported by this URL."}'
     appid = request.args.get('appid')
     if appid is None:
         appid = request.form.get('appid')
@@ -155,7 +155,7 @@ def verify():
 @crossdomain(origin='*')
 def usercheck():
     if request.method != 'POST':
-        return '{"status":-1, "errmsg":"the request type is not POST!"}'
+        return '{"status":-1, "errmsg":"HTTP method GET is not supported by this URL."}'
     token = request.args.get('token')
     if token is None:
         token = request.form.get('token')
