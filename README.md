@@ -1,11 +1,9 @@
-注：目前freetest.net.cn域名，时好时坏，需要等备案完，大概需要2周时间左右  -- 2017.6.23
-
 ### FreeTest是什么
 FreeTest 是一个免费提供验证码服务的开源项目。
-目前服务器部署在阿里云ECS，网速和性能都有保障，域名[http://freetest.net.cn/](http://freetest.net.cn/) 。
+目前服务器部署在阿里云ECS，网速和性能都有保障，域名[https://freetest.net.cn/](https://freetest.net.cn/) 。
 
 ### 测试Demo
-[http://freetest.net.cn/demo](http://freetest.net.cn/demo) 
+[https://freetest.net.cn/demo](https://freetest.net.cn/demo) 
 
 ### 开发环境：
 * 操作系统：Windows、Linux平台
@@ -33,7 +31,7 @@ FreeTest 是一个免费提供验证码服务的开源项目。
 	**sign**  参数签名,大小写不敏感，由"appid;type;secret"md5哈希得到 eg. md5("1000;1;825911868364338FD368FCC9ABC891F2")
 		  
 	*举例说明：*<br>
-	请求 POST http://freetest.net.cn/getcode?appid=1000&type=1&sign=4896E104C73A7C31EC40FE9762D24B59 <br>
+	请求 POST https://freetest.net.cn/getcode?appid=1000&type=1&sign=4896E104C73A7C31EC40FE9762D24B59 <br>
 	返回 {"status":0, "url":"ftstore.kyle.net.cn/ft-1-a094fc94-e09a-4a69-b2f1-b94bb9f7b77f.png", "token":"94bdcb44-5b64-481f-96f1-70b02c8e19ee"}
 	
 	
@@ -46,7 +44,7 @@ FreeTest 是一个免费提供验证码服务的开源项目。
 	**sign**   参数签名，大小写不敏感 由"appid;token;value;secret"md5哈希得到 eg. md5("1000;94bdcb44-5b64-481f-96f1-70b02c8e19ee;abcd;825911868364338FD368FCC9ABC891F2")
 
 	*举例说明：* <br>
-	请求 POST http://freetest.net.cn/verify?appid=1000&token=94bdcb44-5b64-481f-96f1-70b02c8e19ee&value=abcd&sign=dd9fe3162bc1bff35b4b1c4630ad744b <br>
+	请求 POST https://freetest.net.cn/verify?appid=1000&token=94bdcb44-5b64-481f-96f1-70b02c8e19ee&value=abcd&sign=dd9fe3162bc1bff35b4b1c4630ad744b <br>
 	返回 {"status":0, "errmsg":"OK"}
 
 3. 客户端接入
@@ -54,7 +52,7 @@ FreeTest 是一个免费提供验证码服务的开源项目。
 	ajax接入示例：
 	$.ajax({
 		type:"post",
-		url:"http://freetest.net.cn/getcode",
+		url:"https://freetest.net.cn/getcode",
 		data:{"appid":1000, "type":1, "sign":"4896E104C73A7C31EC40FE9762D24B59"},
 		success:function(res){
 			json_obj = JSON.parse(res)
@@ -97,7 +95,7 @@ FreeTest 是一个免费提供验证码服务的开源项目。
 				   str(ft_value) + ";" +
 				   ft_app_secret).hexdigest().upper()
 	    ft_param = "appid=1000&token=%s&value=%s&sign=%s" % (token, ft_value, calc_md5)
-	    req = requests.post("http://freetest.net.cn/verify", params=ft_param)
+	    req = requests.post("https://freetest.net.cn/verify", params=ft_param)
 	    if req.status_code == 200:
 		json_obj = req.json()
 		# 验证码验证成功！
