@@ -33,6 +33,7 @@ def sqlite2redis():
         ft_token += "-" + ft_id
 
         rds.set(ft_id, (ft_value, ft_url, ft_token), ex=REDIS_TIME_OUT)
+    con.close()
 
 
 def get_random_cache():

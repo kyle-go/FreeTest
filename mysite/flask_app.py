@@ -7,12 +7,13 @@ import random
 import datetime
 import logging
 import requests
-from flask import Flask, request, make_response, current_app, redirect, render_template
+from flask import Flask, request, make_response, current_app, render_template
 from datetime import timedelta
 from functools import update_wrapper
 from config import SQLITE3_DB_PATH, REDIS_TIME_OUT
 from utils.redis_helper import sqlite2redis, get_random_cache, get_token_value, init_redis
 from utils.scheduler import MultiThreadScheduler
+from utils.register import init_user_db
 from producer.producer import create_sqlite3_db
 
 ft_app_id = 1000
@@ -28,6 +29,9 @@ logging.basicConfig(filename='flask.log',
 console = logging.StreamHandler()
 console.setLevel(logging.NOTSET)
 logging.getLogger('').addHandler(console)
+
+# 初始化user数据库表
+init_user_db()
 
 # 初始化redis缓存
 init_redis()

@@ -75,3 +75,4 @@ def create_sqlite3_db():
         cur.execute('INSERT INTO ft (vcode, url) VALUES ("%s", "%s")' % (vcode, url))
         con.commit()
         os.remove(TMP_PNG)
+    con.close()
