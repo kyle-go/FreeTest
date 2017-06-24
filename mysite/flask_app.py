@@ -14,12 +14,15 @@ from config import SQLITE3_DB_PATH, REDIS_TIME_OUT
 from utils.redis_helper import sqlite2redis, get_random_cache, get_token_value, init_redis
 from utils.scheduler import MultiThreadScheduler
 from utils.register import init_user_db
+from utils.email import mail, mail_config, send_email_async
 from producer.producer import create_sqlite3_db
 
 ft_app_id = 1000
 ft_app_secret = "825911868364338FD368FCC9ABC891F2"
 
 app = Flask(__name__)
+app.config.update(mail_config)
+mail.init_app(app)
 
 logging.basicConfig(filename='flask.log',
                     filemode='a',
