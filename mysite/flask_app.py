@@ -81,7 +81,7 @@ def crossdomain(origin=None, methods=None, headers=None,
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    return redirect("https://github.com/kylescript/FreeTest")
+    return "网站正在建设中..."
 
 
 @app.route('/demo', methods=['GET', 'POST'])
