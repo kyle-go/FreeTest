@@ -2,6 +2,8 @@
 # qiniu upload file helper
 
 import os
+import datetime
+import pytz
 from qiniu import Auth, put_file
 from config import SQLITE3_DB_PATH
 
@@ -23,8 +25,16 @@ def qiniu_upload_file(file_name, file_path):
 
 def backup_user_db():
     local_file = SQLITE3_DB_PATH + "user.db"
+    if not os.path.exists(local_file):
+        return
 
-    file_name = "user_db_backup.db"
+    utc_time = datetime.datetime.utcnow()
+    tz = pytz.timezone('Asia/Shanghai')
+    utc_time = utc_time.replace(tzinfo=pytz.UTC)
+    result_time = utc_time.astimezone(tz)
+    result_str = result_time.strftime('%Y-%m-%d %H-%M-%S')
+
+    file_name = "user_db_backup_" + result_str + ".db"
     q = Auth(access_key, secret_key)
     token = q.upload_token('freetest', file_name, 3600)
     put_file(token, file_name, local_file)
