@@ -1,14 +1,16 @@
 ﻿# -*- coding:utf-8 -*-
 
 import os
-import uuid
 import random
 import sqlite3
+import uuid
+
 from PIL import Image
 from PIL import ImageDraw
 from PIL import ImageFont
-from qiniuhelper import qiniu_upload_file
+
 from config import SQLITE3_DB_SIZE, SQLITE3_DB_PATH
+from utils.qiniuhelper import qiniu_upload_file
 
 CUR_PATH = os.path.dirname(os.path.abspath(__file__)) + "/"
 TMP_PNG = CUR_PATH + "tmp.png"

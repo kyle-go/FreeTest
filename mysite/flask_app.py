@@ -15,6 +15,7 @@ from utils.redis_helper import sqlite2redis, get_random_cache, get_token_value, 
 from utils.scheduler import MultiThreadScheduler
 from utils.register import init_user_db
 from utils.email import mail, mail_config, send_email_async
+from utils.qiniuhelper import backup_user_db
 from producer.producer import create_sqlite3_db
 
 ft_app_id = 1000
@@ -218,3 +219,7 @@ else:
     # 要确保在这段时间内验证图片可以生成完毕，并且成功上传到七牛云。现在暂时写5分钟，以后可能会调整
     refresh_pictures_scheduler = MultiThreadScheduler(REDIS_TIME_OUT-5*60, scheduler_callback)
     refresh_pictures_scheduler.start()
+
+    # 备份user数据库表, 每1小时备份一次
+    backup_user_db_scheduler = MultiThreadScheduler(60*60, backup_user_db)
+    backup_user_db_scheduler.start()
