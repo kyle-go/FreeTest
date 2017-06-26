@@ -14,11 +14,12 @@ from utils.qiniuhelper import qiniu_upload_file
 
 CUR_PATH = os.path.dirname(os.path.abspath(__file__)) + "/"
 TMP_PNG = CUR_PATH + "tmp.png"
-TEMPLATE_PNG = CUR_PATH + "template.png"
 
 # 待挑选的字符，由于一些字体原因，这里去掉容易混淆的 iI lL oO 10 字符, 还剩下54个字符
 rand_chars = "abcdefghgkmnpqrstuvwxyzABCDEFGHGKMNPQRSTUVWXYZ23456789"
-rand_fonts = (CUR_PATH + "fonts/ChalkboardSE-Light.ttf", CUR_PATH + "fonts/PrincetownStd.otf")
+rand_fonts = (CUR_PATH + "fonts/ChalkboardSE-Light.ttf",
+              CUR_PATH + "fonts/PrincetownStd.otf",
+              CUR_PATH + "fonts/londrina-solid.ttf")
 
 
 def get_rand_chars():
@@ -38,6 +39,8 @@ def draw_image_char(img, c, font, pos_x, index):
         pox_y = -12
     if "PrincetownStd.otf" in font:
         pox_y = 6
+    if "londrina-solid.ttf" in font:
+        pox_y = -5
     font = ImageFont.truetype(font, 36)
     draw = ImageDraw.Draw(img)
     draw.text((pos_x, pox_y), c, (25, 95, 88), font=font)
@@ -51,7 +54,7 @@ def draw_image_char(img, c, font, pos_x, index):
 
 
 def draw_image():
-    im = Image.open(TEMPLATE_PNG)
+    im = Image.new("RGBA", (120, 36), (0,0,0,0))
     pos_x = 10
     index = 0
     vcode = ""
