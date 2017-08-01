@@ -24,9 +24,6 @@ from utils.base_cache import rds
 ft_app_id = 1000
 ft_app_secret = "825911868364338FD368FCC9ABC891F2"
 
-# 页面统计
-web_today = None
-
 app = Flask(__name__)
 app.config.update(mail_config)
 mail.init_app(app)
@@ -55,21 +52,15 @@ random.seed(datetime.datetime.now())
 # t=1 表示getcode
 # t=2 表示verify
 def count_plus(t):
-    global web_today
-
     utc_time = datetime.datetime.utcnow()
     tz = pytz.timezone('Asia/Shanghai')
     utc_time = utc_time.replace(tzinfo=pytz.UTC)
     result_time = utc_time.astimezone(tz)
     result_str = result_time.strftime('%Y-%m-%d')
-    if result_str != web_today:
-        web_today = result_str
+    if result_str != rds.get("today") or t == 0:
+        rds.set("today", result_str)
         rds.set("getcode", 0)
         rds.set("verify", 0)
-
-    # for init data
-    if t == 0:
-        return
     if t == 1:
         rds.incr("getcode", 1)
     if t == 2:
@@ -130,7 +121,7 @@ def demo():
 
 @app.route('/count', methods=['GET'])
 def count():
-    return str(web_today) + " getcode:" + str(rds.get("getcode")) + " verify:" + str(rds.get("verify"))
+    return str(rds.get("today")) + " getcode:" + str(rds.get("getcode")) + " verify:" + str(rds.get("verify"))
 
 
 # POST /getcode?appid=1000&type=1&sign=xxx     eg.sign=md5(appid;type;secret)
