@@ -11,6 +11,12 @@ FreeTest 是一个免费提供验证码服务的开源项目。
 * 依赖工具：Redis, Flask, sqlite3, Image, qiniu
 
 
+### api接口访问统计
+简单几行代码统计此项目接口使用情况,只统计了getcode和verify接口
+
+[https://api.freetest.net.cn/count](https://api.freetest.net.cn/count)
+
+
 ### 使用方法：
 1. 申请appid 和 appkey
 
