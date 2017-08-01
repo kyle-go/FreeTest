@@ -7,7 +7,7 @@ import random
 import datetime
 import logging
 import requests
-from flask import Flask, request, make_response, current_app, render_template
+from flask import Flask, request, make_response, current_app, render_template, redirect
 from datetime import timedelta
 from functools import update_wrapper
 from config import SQLITE3_DB_PATH, REDIS_TIME_OUT
@@ -89,7 +89,7 @@ def crossdomain(origin=None, methods=None, headers=None,
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    return "网站正在建设中..."
+    return redirect("https://github.com/kylescript/FreeTest/blob/master/README.md")
 
 
 @app.route('/demo', methods=['GET', 'POST'])
@@ -199,6 +199,26 @@ def usercheck():
 @crossdomain(origin='*')
 def loginok():
     return 'LOGIN SUCCESSFULLY!'
+
+
+# 邮箱注册
+# @app.route('/register', methods=['GET', 'POST'])
+# @crossdomain(origin='*')
+# def register():
+#     if request.method != 'POST':
+#         return '{"status":-1, "errmsg":"HTTP method GET is not supported by this URL."}'
+#     email = request.args.get('email')
+#     if email is None:
+#         email = request.form.get('email')
+#     code = request.args.get('code')
+#     if code is None:
+#         code = request.form.get('code')
+#     token = request.args.get('token')
+#     if token is None:
+#         token = request.form.get('token')
+#     if email is None or code is None or token is None:
+#         return '{"status":-1, "errmsg":"missing email, code or token param."}'
+
 
 # local debug envirment
 if __name__ == '__main__':
