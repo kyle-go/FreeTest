@@ -18,13 +18,14 @@ from utils.register import init_user_db
 from utils.email import mail, mail_config, send_email_async
 from utils.qiniuhelper import backup_user_db
 from producer.producer import create_sqlite3_db
+from utils.base_cache import rds
+
 
 ft_app_id = 1000
 ft_app_secret = "825911868364338FD368FCC9ABC891F2"
 
 # 页面统计
 web_today = None
-web_count = {"getcode": 0, "verify": 0}
 
 app = Flask(__name__)
 app.config.update(mail_config)
@@ -50,26 +51,29 @@ init_redis()
 random.seed(datetime.datetime.now())
 
 
+# t=0 表示初始化数据
 # t=1 表示getcode
 # t=2 表示verify
 def count_plus(t):
     global web_today
-    global web_count
 
     utc_time = datetime.datetime.utcnow()
     tz = pytz.timezone('Asia/Shanghai')
     utc_time = utc_time.replace(tzinfo=pytz.UTC)
     result_time = utc_time.astimezone(tz)
     result_str = result_time.strftime('%Y-%m-%d')
-    if web_today is None:
-        web_today = result_str
     if result_str != web_today:
-        web_count = {"getcode": 0, "verify": 0}
         web_today = result_str
+        rds.set("getcode", 0)
+        rds.set("verify", 0)
+
+    # for init data
+    if t == 0:
+        return
     if t == 1:
-        web_count["getcode"] += 1
+        rds.incr("getcode", 1)
     if t == 2:
-        web_count["verify"] += 1
+        rds.incr("verify", 1)
 
 
 # 配置跨域支持
@@ -126,10 +130,7 @@ def demo():
 
 @app.route('/count', methods=['GET'])
 def count():
-    global web_today
-    global web_count
-
-    return str(web_today) + " " + str(web_count)
+    return str(web_today) + " getcode:" + str(rds.get("getcode")) + " verify:" + str(rds.get("verify"))
 
 
 # POST /getcode?appid=1000&type=1&sign=xxx     eg.sign=md5(appid;type;secret)
@@ -256,6 +257,8 @@ def loginok():
 #     if email is None or code is None or token is None:
 #         return '{"status":-1, "errmsg":"missing email, code or token param."}'
 
+
+count_plus(0)
 
 # local debug envirment
 if __name__ == '__main__':
