@@ -7,6 +7,7 @@ import random
 import datetime
 import logging
 import requests
+import pytz
 from flask import Flask, request, make_response, current_app, render_template, redirect
 from datetime import timedelta
 from functools import update_wrapper
@@ -20,6 +21,10 @@ from producer.producer import create_sqlite3_db
 
 ft_app_id = 1000
 ft_app_secret = "825911868364338FD368FCC9ABC891F2"
+
+# 页面统计
+web_today = None
+web_count = {"getcode": 0, "verify": 0}
 
 app = Flask(__name__)
 app.config.update(mail_config)
@@ -43,6 +48,28 @@ init_redis()
 
 # 设置随机种子
 random.seed(datetime.datetime.now())
+
+
+# t=1 表示getcode
+# t=2 表示verify
+def count_plus(t):
+    global web_today
+    global web_count
+
+    utc_time = datetime.datetime.utcnow()
+    tz = pytz.timezone('Asia/Shanghai')
+    utc_time = utc_time.replace(tzinfo=pytz.UTC)
+    result_time = utc_time.astimezone(tz)
+    result_str = result_time.strftime('%Y-%m-%d')
+    if web_today is None:
+        web_today = result_str
+    if result_str != web_today:
+        web_count = {"getcode": 0, "verify": 0}
+        web_today = result_str
+    if t == 1:
+        web_count["getcode"] += 1
+    if t == 2:
+        web_count["verify"] += 1
 
 
 # 配置跨域支持
@@ -97,10 +124,19 @@ def demo():
     return render_template("demo.html")
 
 
+@app.route('/count', methods=['GET'])
+def count():
+    global web_today
+    global web_count
+
+    return str(web_today) + " " + str(web_count)
+
+
 # POST /getcode?appid=1000&type=1&sign=xxx     eg.sign=md5(appid;type;secret)
 @app.route('/getcode', methods=['GET', 'POST'])
 @crossdomain(origin='*')
 def getvcode():
+    count_plus(1)
     if request.method != 'POST':
         return '{"status":-1, "errmsg":"HTTP method GET is not supported by this URL."}'
     appid = request.args.get('appid')
@@ -131,6 +167,7 @@ def getvcode():
 @app.route('/verify', methods=['GET', 'POST'])
 @crossdomain(origin='*')
 def verify():
+    count_plus(2)
     if request.method != 'POST':
         return '{"status":-1, "errmsg":"HTTP method GET is not supported by this URL."}'
     appid = request.args.get('appid')
