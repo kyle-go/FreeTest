@@ -67,7 +67,7 @@ FreeTest 是一个免费提供验证码服务的开源项目。
 	});
 	```
 	注意 
-	* **ft_app_secret** 不能暴露出来，sign可以事先算好了放在HTML前端，也可以由自己服务器发起getcode请求，然后再将验证码url和token发给前端页面。 详细代码请参考 [Demo](https://github.com/kylescript/FreeTest/blob/master/demo/demo.html)
+	* **ft_app_secret** 不能暴露出来，sign可以事先算好了放在HTML前端，也可以由自己服务器发起getcode请求，然后再将验证码url和token发给前端页面。 详细代码请参考 [Demo](https://api.freetest.net.cn/demo)
 	* getcode接口返回url不带http头， 根据自己的页面需求自行拼接http或者https头。
 	* api.freetest.net.cn请求支持http和https，可根据自己需求自行调整。
 4. 服务器接入 
